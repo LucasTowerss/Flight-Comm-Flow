@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Comm Flow</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- SETUP WIZARD -->
+  <div id="setup-screen" class="screen active">
+    <div class="wizard">
+
+      <header class="wiz-head">
+        <div class="wiz-brand">
+          <span class="wiz-logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+          </span>
+          <span class="wiz-brandtext">
+            <span class="wiz-title">FLIGHT COMM FLOW</span>
+            <span class="wiz-sub">Aviation Communication Trainer</span>
+          </span>
+        </div>
+        <ol class="stepper" id="stepper"></ol>
+        <button type="button" class="theme-toggle" id="theme-toggle-head" title="Toggle dark / light mode" aria-label="Toggle theme">
+          <svg class="icon-moon" viewBox="0 0 24 24"><path d="M12.3 22a10 10 0 0 1-9.5-13.3A10 10 0 0 0 15.3 2.8 10 10 0 0 1 12.3 22z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5h.01L12 4l.01-2zM12 20l-.01 2L12 22zm8-8h2l-2-.01zM2 12h2L2 12.01zM18.4 5.6l1.4-1.4-1.4 1.4zM4.2 19.8l1.4-1.4zM18.4 18.4l1.4 1.4-1.4-1.4zM4.2 4.2l1.4 1.4z"/></svg>
+        </button>
+      </header>
+
+      <main class="wiz-body">
+
+        <!-- STEP 1 — AIRLINE -->
+        <section class="panel active" id="panel-airline">
+          <div class="panel-head">
+            <h2>Choose your airline</h2>
+            <p>Pick an airline below, or create a custom one.</p>
+          </div>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+            <input type="text" class="airport-search" id="airline-search" placeholder="Search airlines&hellip;" autocomplete="off">
+          </div>
+          <div class="airline-grid" id="airline-grid"></div>
+
+          <div class="custom-wrap">
+            <button type="button" class="airline-card custom" id="custom-card">
+              <span class="airline-logo custom-logo">
+                <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>
+              </span>
+              <span class="airline-name">Custom airline</span>
+              <span class="airline-code">Use your own</span>
+            </button>
+            <div class="custom-input hidden" id="custom-input-wrap">
+              <input type="text" id="custom-name" placeholder="Airline name, e.g. Horizon Air" autocomplete="off" maxlength="28">
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 2 — CALL SIGN -->
+        <section class="panel" id="panel-callsign">
+          <div class="panel-head">
+            <h2>Enter your call sign</h2>
+            <p>What flight number are you flying?</p>
+          </div>
+          <div class="callsign-box">
+            <div class="callsign-chosen" id="callsign-chosen"></div>
+            <div class="callsign-form">
+              <div class="seg" id="format-seg" role="group" aria-label="Callsign format">
+                <button type="button" class="seg-btn active" data-format="airline">Radio</button>
+                <button type="button" class="seg-btn" data-format="icao">ICAO</button>
+              </div>
+              <label class="field-label" for="flight-number">Flight number</label>
+              <input type="text" id="flight-number" class="big-input" inputmode="numeric" placeholder="205" autocomplete="off" maxlength="6">
+              <div class="callsign-preview">
+                <span class="cp-label">Full call sign</span>
+                <span class="cp-value" id="cp-value">&mdash;</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 3 — CONFIRM -->
+        <section class="panel" id="panel-confirm">
+          <div class="panel-head">
+            <h2>Confirm your call sign</h2>
+            <p>Make sure this is right before we continue.</p>
+          </div>
+          <div class="confirm-card">
+            <div class="confirm-logo" id="confirm-logo"></div>
+            <div class="confirm-callsign" id="confirm-callsign">&mdash;</div>
+            <div class="confirm-meta" id="confirm-meta"></div>
+          </div>
+        </section>
+
+        <!-- STEP 4 — DEPARTURE -->
+        <section class="panel" id="panel-departure">
+          <div class="panel-head">
+            <h2>Departure airport</h2>
+            <p>Where are you flying from?</p>
+          </div>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+            <input type="text" class="airport-search" id="dep-search" placeholder="Search by code or city&hellip;" autocomplete="off">
+          </div>
+          <div class="airport-list" id="dep-grid"></div>
+        </section>
+
+        <!-- STEP 5 — ARRIVAL -->
+        <section class="panel" id="panel-arrival">
+          <div class="panel-head">
+            <h2>Arrival airport</h2>
+            <p>Where are you flying to?</p>
+          </div>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+            <input type="text" class="airport-search" id="arr-search" placeholder="Search by code or city&hellip;" autocomplete="off">
+          </div>
+          <div class="airport-list" id="arr-grid"></div>
+        </section>
+
+        <!-- STEP 6 — RUNWAY -->
+        <section class="panel" id="panel-runway">
+          <div class="panel-head">
+            <h2>Runways</h2>
+            <p>Almost there &mdash; set your runways.</p>
+          </div>
+          <div class="route-summary" id="route-summary"></div>
+          <div class="runway-form">
+            <div class="runway-field">
+              <label class="field-label" for="dep-runway">Departure runway</label>
+              <input type="text" id="dep-runway" class="big-input" placeholder="22R" autocomplete="off" maxlength="4">
+            </div>
+            <div class="runway-field">
+              <label class="field-label" for="arr-runway">Arrival runway <span class="opt">(optional)</span></label>
+              <input type="text" id="arr-runway" class="big-input" placeholder="24R" autocomplete="off" maxlength="4">
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="wiz-foot">
+        <div class="wiz-foot-inner">
+          <button type="button" class="wiz-btn ghost" id="wiz-back">&larr; Back</button>
+          <button type="button" class="wiz-btn primary" id="wiz-next">Continue &rarr;</button>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- FLOW SCREEN -->
+  <div id="flow-screen" class="screen">
+    <div class="flow-topbar">
+      <button id="btn-back-setup" class="btn-icon" title="Back to Setup">
+        <span>&larr;</span> Setup
+      </button>
+      <div class="flight-badge" id="flight-badge"></div>
+      <div class="topbar-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle-flow" title="Toggle dark / light mode" aria-label="Toggle theme">
+          <svg class="icon-moon" viewBox="0 0 24 24"><path d="M12.3 22a10 10 0 0 1-9.5-13.3A10 10 0 0 0 15.3 2.8 10 10 0 0 1 12.3 22z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5h.01L12 4l.01-2zM12 20l-.01 2L12 22zm8-8h2l-2-.01zM2 12h2L2 12.01zM18.4 5.6l1.4-1.4-1.4 1.4zM4.2 19.8l1.4-1.4zM18.4 18.4l1.4 1.4-1.4-1.4zM4.2 4.2l1.4 1.4z"/></svg>
+        </button>
+        <button id="btn-readback-mode" class="btn-icon" title="Readback Mode">
+          Readback Mode
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-info">
+        <span id="progress-phase"></span>
+        <span id="progress-step"></span>
+      </div>
+      <div class="progress-dots" id="progress-dots"></div>
+    </div>
+
+    <div class="step-container" id="step-container"></div>
+
+    <div class="nav-bar">
+      <button id="btn-back" class="btn-nav btn-back">&larr; BACK</button>
+      <button id="btn-skip" class="btn-nav btn-skip">SKIP &rarr;</button>
+      <button id="btn-next" class="btn-nav btn-next">NEXT &rarr;</button>
+    </div>
+  </div>
+
+  <!-- READBACK MODE OVERLAY -->
+  <div id="readback-overlay" class="overlay">
+    <div class="overlay-content">
+      <div class="overlay-header">
+        <h2>READBACK MODE</h2>
+        <button id="btn-close-readback" class="btn-close">&times;</button>
+      </div>
+      <p class="overlay-desc">Paste or type the ATC instruction you received. The app will generate your readback.</p>
+
+      <div class="readback-input-group">
+        <label for="readback-input">ATC Instruction</label>
+        <textarea id="readback-input" rows="3" placeholder='United 205, taxi to runway 22R via Alpha, Bravo, hold short runway 18.'></textarea>
+        <button id="btn-generate-readback" class="btn-generate">GENERATE READBACK</button>
+      </div>
+
+      <div id="readback-result" class="readback-result hidden">
+        <div class="readback-parsed" id="readback-parsed"></div>
+        <div class="comm-block readback">
+          <div class="comm-label">YOUR READBACK</div>
+          <blockquote id="readback-output"></blockquote>
+          <button class="btn-copy" data-target="readback-output">COPY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast">Copied!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
